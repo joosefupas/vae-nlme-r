@@ -1,0 +1,33 @@
+% Requires: \usepackage{booktabs}
+\begin{table}[ht]
+\centering
+\caption{VAE-NLME Parameter Estimates: theophylline\_multiple}
+\label{tab:theophylline-multiple}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Parameter & Linear. & IS \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Fixed Effects}} \\
+\quad \texttt{ka\_pop} & 1.7864 & \\
+\quad \texttt{ke\_pop} & 0.0861 & \\
+\quad \texttt{V\_pop} & 31.6513 & \\
+\multicolumn{3}{@{}l}{\textit{Covariate Effects (selected)}} \\
+\quad \texttt{beta\_ka\_weight} & 3.0237 & \\
+\quad \texttt{beta\_V\_weight} & 0.6313 & \\
+\multicolumn{3}{@{}l}{\textit{Random Effects (SD)}} \\
+\quad \texttt{omega\_ka} & 0.4558 & \\
+\quad \texttt{omega\_ke} & 0.1431 & \\
+\quad \texttt{omega\_V} & 0.1342 & \\
+\multicolumn{3}{@{}l}{\textit{Error Model}} \\
+\quad $a$ & 0.6971 & \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Information Criteria}} \\
+\quad Criterion & Linearisation & Imp.\ Sampling \\
+\midrule
+\quad OFV & 2518.63 & 2519.13 \\
+\quad AIC & 2536.63 & 2537.13 \\
+\quad BIC & 2545.59 & 2546.09 \\
+\quad BICc & 2561.62 & 2562.12 \\
+\bottomrule
+\end{tabular}
+\end{table}

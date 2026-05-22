@@ -1,0 +1,41 @@
+% Requires: \usepackage{booktabs}
+\begin{table}[ht]
+\centering
+\caption{VAE-NLME Parameter Estimates: neonates}
+\label{tab:neonates}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Parameter & Linear. & IS \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Fixed Effects}} \\
+\quad \texttt{W0\_pop} & 3433.8408 & \\
+\quad \texttt{kin\_pop} & 82.0532 & \\
+\quad \texttt{Tlag\_pop} & 1.6827 & \\
+\quad \texttt{koutmax\_pop} & 0.0718 & \\
+\quad \texttt{T50\_pop} & 1.0137 & \\
+\multicolumn{3}{@{}l}{\textit{Covariate Effects (selected)}} \\
+\quad \texttt{Sex\_W0} & 0.0916 & \\
+\quad \texttt{GAexact\_W0} & 1.8922 & \\
+\quad \texttt{GAexact\_kin} & 3.6418 & \\
+\quad \texttt{Para2\_kin} & 0.1709 & \\
+\quad \texttt{Mage\_TL} & 0.3455 & \\
+\quad \texttt{Mage\_kout} & 0.1880 & \\
+\multicolumn{3}{@{}l}{\textit{Random Effects (SD)}} \\
+\quad \texttt{omega\_W0} & 0.1548 & \\
+\quad \texttt{omega\_kin} & 0.1000 & \\
+\quad \texttt{omega\_Tlag} & 0.1231 & \\
+\quad \texttt{omega\_koutmax} & 0.1000 & \\
+\quad \texttt{omega\_T50} & 0.1759 & \\
+\multicolumn{3}{@{}l}{\textit{Error Model}} \\
+\quad $a$ & 30.7881 & \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Information Criteria}} \\
+\quad Criterion & Linearisation & Imp.\ Sampling \\
+\midrule
+\quad OFV & 12692.04 & 12715.11 \\
+\quad AIC & 12726.04 & 12749.11 \\
+\quad BIC & 12781.15 & 12804.22 \\
+\quad BICc & 12791.83 & 12814.90 \\
+\bottomrule
+\end{tabular}
+\end{table}

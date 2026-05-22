@@ -1,0 +1,19 @@
+"Section","Parameter","Estimate_Lin","Estimate_IS"
+"Fixed Effects","CL_pop",26.7862,NA
+"Fixed Effects","V1_pop",53.3564,NA
+"Fixed Effects","Q_pop",30.3211,NA
+"Fixed Effects","V2_pop",62.4287,NA
+"Covariate Effects","SEX_CL",0.2659,NA
+"Covariate Effects","WT_CL",0.829,NA
+"Covariate Effects","WT_V1",0.7274,NA
+"Covariate Effects","WT_Q",0.8149,NA
+"Covariate Effects","WT_V2",0.508,NA
+"Random Effects (SD)","omega_CL",0.2188,NA
+"Random Effects (SD)","omega_V1",0.4272,NA
+"Random Effects (SD)","omega_Q",0.5712,NA
+"Random Effects (SD)","omega_V2",0.2321,NA
+"Error Model","a",33.801,NA
+"IC","OFV",25728.27,25860.99
+"IC","AIC",25756.27,25888.99
+"IC","BIC",25802.31,25935.02
+"IC","BICc",25814.94,25947.66

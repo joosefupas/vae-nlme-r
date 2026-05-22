@@ -1,0 +1,22 @@
+"Section","Parameter","Estimate_Lin","Estimate_IS"
+"Fixed Effects","W0_pop",3433.8408,NA
+"Fixed Effects","kin_pop",82.0532,NA
+"Fixed Effects","Tlag_pop",1.6827,NA
+"Fixed Effects","koutmax_pop",0.0718,NA
+"Fixed Effects","T50_pop",1.0137,NA
+"Covariate Effects","Sex_W0",0.0916,NA
+"Covariate Effects","GAexact_W0",1.8922,NA
+"Covariate Effects","GAexact_kin",3.6418,NA
+"Covariate Effects","Para2_kin",0.1709,NA
+"Covariate Effects","Mage_TL",0.3455,NA
+"Covariate Effects","Mage_kout",0.188,NA
+"Random Effects (SD)","omega_W0",0.1548,NA
+"Random Effects (SD)","omega_kin",0.1,NA
+"Random Effects (SD)","omega_Tlag",0.1231,NA
+"Random Effects (SD)","omega_koutmax",0.1,NA
+"Random Effects (SD)","omega_T50",0.1759,NA
+"Error Model","a",30.7881,NA
+"IC","OFV",12692.04,12715.11
+"IC","AIC",12726.04,12749.11
+"IC","BIC",12781.15,12804.22
+"IC","BICc",12791.83,12814.9
