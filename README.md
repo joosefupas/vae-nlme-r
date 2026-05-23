@@ -97,6 +97,22 @@ information criteria to the console, saves convergence/covariate plots to `Plots
 exports results as CSV / LaTeX / Word to `Results/`, and serialises the fitted model
 to `Results/<dataset>_fit.rds` + `Results/<dataset>_encoder.pt`.
 
+### Running all case studies in batch
+
+`run_all.R` (at the repository root) executes every case study sequentially, each in
+a fresh R subprocess so that one failure does not abort the rest.
+
+```r
+# From an R session — runs all case studies
+source("run_all.R")
+
+# Or from the command line (optionally restrict to a subset)
+# Rscript run_all.R
+# Rscript run_all.R theophylline_multiple warfarin
+```
+
+A summary table (study | status | elapsed time) is printed at the end.
+
 ### Regenerating results without retraining
 
 ```r
