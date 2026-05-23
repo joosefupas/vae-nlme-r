@@ -4,34 +4,33 @@
 
 | Parameter | Estimate |
 |:----------|--------:|
-| `CL_pop` | 0.0157 |
-| `V_pop` | 42.1232 |
+| `CL_pop` | 0.0147 |
+| `V_pop` | 41.0465 |
 
 ### Covariate Effects (selected)
 
 | Parameter | Estimate |
 |:----------|--------:|
-| `WGT_V` | 0.3196 |
-| `HGT_V` | -6.6236 |
+| `HGT_V` | -7.2905 |
 
 ### Random Effects (SD)
 
 | Parameter | Estimate |
 |:----------|--------:|
-| `omega_CL` | 0.8820 |
-| `omega_V` | 0.1000 |
+| `omega_CL` | 0.6602 |
+| `omega_V` | 0.2634 |
 
 ### Error Model
 
 | Parameter | Estimate |
 |:----------|--------:|
-| `a` | 1.7490 |
+| `a` | 1.5807 |
 
 ### Information Criteria
 
 | Criterion | Linearisation | Imp. Sampling |
 |:----------|-------------:|--------------:|
-| OFV | 1298.37 | 1296.78 |
-| AIC | 1312.37 | 1310.78 |
-| BIC | 1331.88 | 1330.30 |
-| BICc | 1334.84 | 1333.25 |
+| OFV | 1282.07 | 1277.42 |
+| AIC | 1294.07 | 1289.42 |
+| BIC | 1310.80 | 1306.14 |
+| BICc | 1313.75 | 1309.10 |

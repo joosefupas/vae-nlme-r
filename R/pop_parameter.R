@@ -101,9 +101,14 @@ pop_parameter <- R6Class(
       # ---- 2. Update sufficient statistics (EMA) ---------------------------
       self$s1 <- self$s1 + self$gamma * (mu - self$s1)
 
+      # Python uses raw mu (not the smoothed s1) to compute sum2 — faithful to
+      # the EM sufficient-statistic:  s2 ≈ EMA( sum_i mu_i mu_i^T )
+      # Using self$s1 here would create a "double-smoothed" statistic that
+      # diverges from Python as soon as gamma < 1, causing omega_pop to shrink
+      # artificially at the start of the smoothing phase (k_beta).
       sum2 <- torch_zeros(self$z_dim, self$z_dim)
       for (i in seq_len(self$nbatch)) {
-        mi   <- self$s1[i, ]$view(c(self$z_dim, 1L))
+        mi   <- mu[i, ]$view(c(self$z_dim, 1L))   # raw encoder mu, not s1
         sum2 <- sum2 + torch_matmul(mi, mi$t())
       }
       self$s2 <- self$s2 + self$gamma * (sum2 - self$s2)

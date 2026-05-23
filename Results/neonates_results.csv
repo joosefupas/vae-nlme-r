@@ -1,22 +1,22 @@
 "Section","Parameter","Estimate_Lin","Estimate_IS"
-"Fixed Effects","W0_pop",3433.8408,NA
-"Fixed Effects","kin_pop",82.0532,NA
-"Fixed Effects","Tlag_pop",1.6827,NA
-"Fixed Effects","koutmax_pop",0.0718,NA
-"Fixed Effects","T50_pop",1.0137,NA
-"Covariate Effects","Sex_W0",0.0916,NA
-"Covariate Effects","GAexact_W0",1.8922,NA
-"Covariate Effects","GAexact_kin",3.6418,NA
-"Covariate Effects","Para2_kin",0.1709,NA
-"Covariate Effects","Mage_TL",0.3455,NA
-"Covariate Effects","Mage_kout",0.188,NA
-"Random Effects (SD)","omega_W0",0.1548,NA
-"Random Effects (SD)","omega_kin",0.1,NA
-"Random Effects (SD)","omega_Tlag",0.1231,NA
+"Fixed Effects","W0_pop",3433.7424,NA
+"Fixed Effects","kin_pop",81.0674,NA
+"Fixed Effects","Tlag_pop",1.6877,NA
+"Fixed Effects","koutmax_pop",0.0719,NA
+"Fixed Effects","T50_pop",1.0156,NA
+"Covariate Effects","Sex_W0",0.0915,NA
+"Covariate Effects","GAexact_W0",1.8948,NA
+"Covariate Effects","GAexact_kin",3.9408,NA
+"Covariate Effects","Para2_kin",0.1732,NA
+"Covariate Effects","Mage_TL",0.3373,NA
+"Covariate Effects","Mage_kout",0.1737,NA
+"Random Effects (SD)","omega_W0",0.1268,NA
+"Random Effects (SD)","omega_kin",0.2184,NA
+"Random Effects (SD)","omega_Tlag",0.1035,NA
 "Random Effects (SD)","omega_koutmax",0.1,NA
-"Random Effects (SD)","omega_T50",0.1759,NA
-"Error Model","a",30.7881,NA
-"IC","OFV",12692.04,12715.11
-"IC","AIC",12726.04,12749.11
-"IC","BIC",12781.15,12804.22
-"IC","BICc",12791.83,12814.9
+"Random Effects (SD)","omega_T50",0.1813,NA
+"Error Model","a",29.7577,NA
+"IC","OFV",12587.12,12617.93
+"IC","AIC",12621.12,12651.93
+"IC","BIC",12676.23,12707.04
+"IC","BICc",12686.91,12717.72

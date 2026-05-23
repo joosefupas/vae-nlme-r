@@ -57,12 +57,66 @@ library(patchwork)
   x_gam <- iters_burn_in + gamma_iter
   x_end <- iters_burn_in + iters
 
+  ribbon_df <- data.frame(xmin = 0, xmax = x_bi, ymin = -Inf, ymax = Inf,
+                           phase = "burn_in")
+  vline_df  <- data.frame(xintercept = c(x_kl, x_gam),
+                           phase = c("k_alpha", "k_b"))
+
+  lbl_ka <- paste0("k\u03b1 = ", kl_iter,   "  (KL annealing ends)")
+  lbl_kb <- paste0("k_b = ",    gamma_iter, "  (smoothing begins)")
+
   p +
-    annotate("rect", xmin = 0, xmax = x_bi, ymin = -Inf, ymax = Inf,
-             fill = "grey70", alpha = 0.25) +
-    geom_vline(xintercept = x_kl,  linetype = "dashed", color = "darkgreen") +
-    geom_vline(xintercept = x_gam, linetype = "dashed", color = "red") +
-    coord_cartesian(xlim = c(0, x_end))
+    geom_rect(data = ribbon_df, inherit.aes = FALSE,
+              aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = phase),
+              alpha = 0.25) +
+    geom_vline(data = vline_df,
+               aes(xintercept = xintercept, colour = phase),
+               linetype = "dashed", linewidth = 0.7) +
+    scale_fill_manual(
+      name   = NULL,
+      values = c("burn_in" = "grey60"),
+      labels = c("burn_in" = "Burn-in"),
+      guide  = guide_legend(override.aes = list(fill  = "grey60", alpha = 0.5,
+                                                 colour = NA, linetype = 0))
+    ) +
+    scale_colour_manual(
+      name   = NULL,
+      values = c("k_alpha" = "darkgreen", "k_b" = "red"),
+      labels = c("k_alpha" = lbl_ka, "k_b" = lbl_kb),
+      guide  = guide_legend(override.aes = list(linetype = "dashed", linewidth = 0.7))
+    ) +
+    scale_x_continuous(labels = function(x) x - iters_burn_in) +
+    coord_cartesian(xlim = c(0, x_end)) +
+    theme(legend.position  = "bottom",
+          legend.direction  = "horizontal",
+          legend.text       = element_text(size = 7.5),
+          legend.key.width  = unit(1.4, "cm"),
+          legend.spacing.x  = unit(0.4, "cm"))
+}
+
+# Lighter version for covariate plots (training-only x-axis, no burn-in ribbon)
+.add_phase_lines <- function(p, kl_iter, gamma_iter, iters) {
+  vline_df <- data.frame(xintercept = c(kl_iter, gamma_iter),
+                          phase = c("k_alpha", "k_b"))
+  lbl_ka <- paste0("k\u03b1 = ", kl_iter,   "  (KL annealing ends)")
+  lbl_kb <- paste0("k_b = ",    gamma_iter, "  (smoothing begins)")
+
+  p +
+    geom_vline(data = vline_df,
+               aes(xintercept = xintercept, colour = phase),
+               linetype = "dashed", linewidth = 0.7) +
+    scale_colour_manual(
+      name   = NULL,
+      values = c("k_alpha" = "darkgreen", "k_b" = "red"),
+      labels = c("k_alpha" = lbl_ka, "k_b" = lbl_kb),
+      guide  = guide_legend(override.aes = list(linetype = "dashed", linewidth = 0.7))
+    ) +
+    coord_cartesian(xlim = c(0, iters)) +
+    theme(legend.position  = "bottom",
+          legend.direction  = "horizontal",
+          legend.text       = element_text(size = 7.5),
+          legend.key.width  = unit(1.4, "cm"),
+          legend.spacing.x  = unit(0.4, "cm"))
 }
 
 # =============================================================================
@@ -155,18 +209,20 @@ plotConvergence_pop_theo <- function(elbo_iter, a_iter, z_pop_iter,
     make_panel(elbo_v,         expression(-italic(L)[psi](x)))
   )
 
-  p_out <- wrap_plots(panels, ncol = 3)
-  .save_plot(p_out, save_path, width = 10, height = 6)
+  p_out <- wrap_plots(panels, ncol = 3) +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  .save_plot(p_out, save_path, width = 10, height = 7)
 }
 
 plotConvergence_covariate_theo <- function(z_pop_iter, iters, kl_iter,
                                             gamma_iter, iters_burn_in,
                                             save_path = "Plots/theophylline_convergence_covariate.pdf") {
   zpop_mat <- matrix(.t2v(z_pop_iter), ncol = dim(z_pop_iter)[2])
-  x_axis   <- seq_len(iters)
-  # z_pop_iter contains burn-in rows prepended to main-loop rows (total = iters_burn_in + iters).
-  # Always plot the last `iters` rows (main-loop data only).
-  zpop_sub <- zpop_mat[tail(seq_len(nrow(zpop_mat)), iters), , drop = FALSE]
+  n_total  <- iters_burn_in + iters
+  x_axis   <- seq_len(n_total)
+  # Include burn-in rows (covariates are 0 during burn-in, matching the paper's plots).
+  zpop_sub <- zpop_mat
 
   # Columns 4,6,8 = weight effects; 5,7,9 = sex effects (0-indexed in Python → +1 in R)
   panels_info <- list(
@@ -179,24 +235,24 @@ plotConvergence_covariate_theo <- function(z_pop_iter, iters, kl_iter,
   )
 
   make_panel <- function(y, title) {
-    df <- data.frame(x = x_axis, y = y[seq_len(iters)])
+    df <- data.frame(x = x_axis, y = y[seq_len(n_total)])
     p  <- ggplot(df, aes(x, y)) + geom_line(colour = "steelblue", linewidth = 0.6) +
       ggtitle(title) + ylab("") + .vae_theme()
     if (tail(y[!is.na(y)], 1) == 0) {
       p <- p + annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf,
                         fill = "grey80", alpha = 0.4)
     }
-    p + geom_vline(xintercept = kl_iter,   linetype = "dashed", color = "darkgreen") +
-        geom_vline(xintercept = gamma_iter, linetype = "dashed", color = "red") +
-        coord_cartesian(xlim = c(0, iters))
+    .add_phases(p, iters_burn_in, kl_iter, gamma_iter, iters)
   }
 
   panels <- lapply(panels_info, function(pi) {
     make_panel(zpop_sub[, pi$col], pi$title)
   })
 
-  p_out <- wrap_plots(panels, ncol = 3)
-  .save_plot(p_out, save_path, width = 10, height = 4)
+  p_out <- wrap_plots(panels, ncol = 3) +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  .save_plot(p_out, save_path, width = 10, height = 4.5)
 }
 
 # =============================================================================
@@ -286,8 +342,10 @@ plotConvergence_pop_neonates <- function(elbo_iter, a_iter, z_pop_iter,
          make_panel(elbo_v, expression(-italic(L)[psi](x))))
   )
 
-  p_out <- wrap_plots(panels, ncol = 4)
-  .save_plot(p_out, save_path, width = 12, height = 8)
+  p_out <- wrap_plots(panels, ncol = 4) +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  .save_plot(p_out, save_path, width = 12, height = 8.5)
 }
 
 # =============================================================================
@@ -385,8 +443,10 @@ plotConvergence_pop_generic <- function(elbo_iter, a_iter, z_pop_iter,
   )
 
   ncols <- min(4L, ceiling(sqrt(length(panels))))
-  p_out <- wrap_plots(panels, ncol = ncols)
-  ht    <- ceiling(length(panels) / ncols) * 2.2
+  p_out <- wrap_plots(panels, ncol = ncols) +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  ht    <- ceiling(length(panels) / ncols) * 2.2 + 0.6
   .save_plot(p_out, save_path, width = ncols * 2.8, height = ht)
 }
 
@@ -399,21 +459,20 @@ plotConvergence_covariate_generic <- function(z_pop_iter, z_dim, iters, kl_iter,
                                                cov_titles,
                                                save_path = "Plots/convergence_covariate.pdf") {
   zpop_mat <- matrix(.t2v(z_pop_iter), ncol = dim(z_pop_iter)[2])
-  x_axis   <- seq_len(iters)
-  zpop_sub <- zpop_mat[(iters_burn_in + 1):nrow(zpop_mat), , drop = FALSE]
+  n_total  <- iters_burn_in + iters
+  x_axis   <- seq_len(n_total)
+  zpop_sub <- zpop_mat   # include burn-in rows (covariates = 0 during burn-in)
   M        <- ncol(zpop_sub) - z_dim
 
   make_panel <- function(y, title) {
-    df <- data.frame(x = x_axis, y = y[seq_len(iters)])
+    df <- data.frame(x = x_axis, y = y[seq_len(n_total)])
     p  <- ggplot(df, aes(x, y)) + geom_line(colour = "steelblue", linewidth = 0.5) +
       ggtitle(title) + ylab("") + .vae_theme()
     if (tail(y[!is.na(y)], 1) == 0) {
       p <- p + annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf,
                         fill = "grey80", alpha = 0.4)
     }
-    p + geom_vline(xintercept = kl_iter,   linetype = "dashed", color = "darkgreen") +
-        geom_vline(xintercept = gamma_iter, linetype = "dashed", color = "red") +
-        coord_cartesian(xlim = c(0, iters))
+    .add_phases(p, iters_burn_in, kl_iter, gamma_iter, iters)
   }
 
   panels <- lapply(seq_len(M), function(k) {
@@ -423,16 +482,19 @@ plotConvergence_covariate_generic <- function(z_pop_iter, z_dim, iters, kl_iter,
   n_cov  <- M / z_dim
   ncols  <- min(n_cov, 5L)
   nrows  <- ceiling(M / ncols)
-  p_out  <- wrap_plots(panels, ncol = ncols)
-  .save_plot(p_out, save_path, width = ncols * 2.8, height = nrows * 2.2)
+  p_out  <- wrap_plots(panels, ncol = ncols) +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  .save_plot(p_out, save_path, width = ncols * 2.8, height = nrows * 2.2 + 0.6)
 }
 
 plotConvergence_covariate_neonates <- function(z_pop_iter, iters, kl_iter,
                                                 gamma_iter, iters_burn_in,
                                                 save_path = "Plots/neonates_convergence_covariate.pdf") {
   zpop_mat <- matrix(.t2v(z_pop_iter), ncol = dim(z_pop_iter)[2])
-  x_axis   <- seq_len(iters)
-  zpop_sub <- zpop_mat[(iters_burn_in + 1):nrow(zpop_mat), , drop = FALSE]
+  n_total  <- iters_burn_in + iters
+  x_axis   <- seq_len(n_total)
+  zpop_sub <- zpop_mat   # include burn-in rows (covariates = 0 during burn-in)
 
   # Columns 6:30 are the 25 covariate effects (z_dim=5, n_cov=5)
   cov_names <- c(
@@ -454,24 +516,24 @@ plotConvergence_covariate_neonates <- function(z_pop_iter, iters, kl_iter,
   )
 
   make_panel <- function(y, title) {
-    df <- data.frame(x = x_axis, y = y[seq_len(iters)])
+    df <- data.frame(x = x_axis, y = y[seq_len(n_total)])
     p  <- ggplot(df, aes(x, y)) + geom_line(colour = "steelblue", linewidth = 0.5) +
       ggtitle(title) + ylab("") + .vae_theme()
     if (tail(y[!is.na(y)], 1) == 0) {
       p <- p + annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf,
                         fill = "grey80", alpha = 0.4)
     }
-    p + geom_vline(xintercept = kl_iter,   linetype = "dashed", color = "darkgreen") +
-        geom_vline(xintercept = gamma_iter, linetype = "dashed", color = "red") +
-        coord_cartesian(xlim = c(0, iters))
+    .add_phases(p, iters_burn_in, kl_iter, gamma_iter, iters)
   }
 
   panels <- lapply(seq_len(25), function(k) {
     make_panel(zpop_sub[, k + 5], cov_names[[k]])
   })
 
-  p_out <- wrap_plots(panels, ncol = 5)
-  .save_plot(p_out, save_path, width = 18, height = 10)
+  p_out <- wrap_plots(panels, ncol = 5) +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  .save_plot(p_out, save_path, width = 18, height = 11)
 }
 
 # =============================================================================

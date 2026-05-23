@@ -260,6 +260,36 @@ plot_vpc_theo_mult(..., tald = FALSE, nbins = 10)   # absolute time
 
 ---
 
+## Differences from Python / Bug fixes
+
+### `sum2` in `pop_parameter.R` — EMA sufficient statistic for s2
+
+**Python source** (reconstructed from Cython-compiled `pop_parameter.pyd`):
+
+```python
+self.s1 = self.s1 + self.gamma * (mu - self.s1)   # update smoothed mean
+
+sum2 = 0
+for i in range(self.nbatch):
+    sum2 += torch.matmul(mu[i].view(z_dim, 1), mu[i].view(1, z_dim))  # raw mu
+self.s2 = self.s2 + self.gamma * (sum2 - self.s2)
+```
+
+`s2` tracks the EMA of `Σᵢ μᵢ μᵢᵀ` using the **raw encoder output** `mu`.
+
+An earlier version of `pop_parameter.R` used `self$s1[i,]` (the already-smoothed mean)
+instead of the raw `mu[i,]`.  This is benign when `gamma = 1` (all iterations before
+`gamma_iter`) because `s1 = mu` exactly.  Once the smoothing phase starts
+(`iter > gamma_iter`, `gamma < 1`), `s1` starts lagging behind `mu`, and by Jensen's
+inequality `E[s1²] ≤ E[mu²]`.  This makes R's `s2` systematically smaller than Python's,
+which in turn deflates `omega_pop` — producing the visible **sudden drop in ω_{ke}** at
+k_β that has no counterpart in the Python traceplot.
+
+**Fix (current code):** `pop_parameter.R` now uses `mu[i,]` (the raw `mu` parameter
+passed into `update_pop`) when computing `sum2`, matching the Python formula exactly.
+
+---
+
 ## Key design notes
 
 ### Encoder

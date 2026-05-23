@@ -49,6 +49,7 @@ data      <- loaded$data
 data_in   <- loaded$data_in
 lengths   <- loaded$lengths
 covariates <- loaded$covariates   # [N, 5]  (Sex, DelM, GA_tr, Mage_tr, Para2)
+covariates_in <- covariates       # alias used by save_vae_fit / PPC
 
 # =============================================================================
 # 2. Dimensions
@@ -250,7 +251,6 @@ plotConvergence_covariate_neonates(z_pop_iter, iters, kl_iter, gamma_iter, iters
 # =============================================================================
 # VPC + PPC
 # =============================================================================
-covariates_in <- covariates
 plot_vpc_neonates(data, lengths, z_pop, omega_pop, a, b, C, z_dim,
                   n_sim=300L, nbins=8,
                   save_path=file.path(root_dir,"Plots","neonates_vpc.pdf"))
